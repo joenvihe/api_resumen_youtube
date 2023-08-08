@@ -15,6 +15,8 @@ captions_list_response = youtube.captions().list(
 ).execute()
 
 # Get the transcript for the first caption track
+print(captions_list_response)
+print("-----------------------------------------")
 transcript = captions_list_response["items"][0]["snippet"]["text"]
 
 # Print the transcript
