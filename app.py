@@ -10,16 +10,9 @@ logging.basicConfig(
 
 app = Flask(__name__)
 
-
 @app.errorhandler(429)
 def ratelimit_error(e):
     return jsonify(error='Rate limit exceeded', message=str(e.description)), 429
-
-# Filtro de solicitud para autenticación
-@limiter.request_filter
-def is_not_authenticated():
-    api_key = request.headers.get('X-API-Key')
-    return api_key is None
 
 # Ruta protegida con registro de auditoría
 @app.route('/api/resource', methods=['GET'])
@@ -39,6 +32,16 @@ def protected_resource():
         return jsonify(message='Acceso concedido a la API protegida')
     else:
         return jsonify(error='Acceso no autorizado'), 401
+
+
+# Filtro de solicitud para autenticación
+@limiter.request_filter
+def is_not_authenticated():
+    api_key = request.headers.get('X-API-Key')
+    return api_key is None
+
+if __name__ == '__main__':
+    app.run()
 
 """
 from apiclient.discovery import build
