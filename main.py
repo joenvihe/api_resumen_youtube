@@ -7,7 +7,7 @@ API_KEY = os.environ["API_KEY_YOUTUBE_DATA"]
 print(API_KEY)
 VIDEO_ID = "5EfFqAAWvqw"
 channel_id = 'Your Channel_id'  # replace it with your channel id
-youtube = build('youtube', 'v3', developerKey=api_key)
+youtube = build('youtube', 'v3', developerKey=API_KEY)
 
 try:
     responses = YouTubeTranscriptApi.get_transcript(video_id, languages=['es'])
