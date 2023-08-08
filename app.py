@@ -10,8 +10,6 @@ logging.basicConfig(
 
 app = Flask(__name__)
 
-# Configura Flask-Limiter con la función de clave
-limiter = Limiter(request.headers.get('X-API-Key'), app=app, default_limits=["200 per day", "50 per hour"])
 
 @app.errorhandler(429)
 def ratelimit_error(e):
@@ -29,6 +27,9 @@ def protected_resource():
     api_key = request.headers.get('X-API-Key')
     logger = logging.getLogger('app')  # Crear un nuevo logger aquí
     logger.info(f"Solicitud recibida para la ruta /api/resource con clave API: {api_key}")
+
+    # Configura Flask-Limiter con la función de clave
+    limiter = Limiter(api_key, app=app, default_limits=["200 per day", "50 per hour"])
 
     if api_key == 'tu_clave_secreta':
         return jsonify(message='Acceso concedido a la API protegida')
