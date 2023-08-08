@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 import logging
 
 logging.basicConfig(
@@ -32,7 +31,6 @@ def protected_resource():
         return jsonify(message='Acceso concedido a la API protegida')
     else:
         return jsonify(error='Acceso no autorizado'), 401
-
 
 
 if __name__ == '__main__':
