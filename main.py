@@ -1,24 +1,19 @@
-import googleapiclient.discovery
+from apiclient.discovery import build
+from youtube_transcript_api import YouTubeTranscriptApi
 import os
-
-# Set your API key and video ID
+ 
 API_KEY = os.environ["API_KEY_YOUTUBE_DATA"]
+# Set your API key and video ID
 print(API_KEY)
 VIDEO_ID = "5EfFqAAWvqw"
+channel_id = 'Your Channel_id'  # replace it with your channel id
+youtube = build('youtube', 'v3', developerKey=api_key)
 
-# Create a YouTube service object
-youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=API_KEY)
-print(youtube)
-# Call the captions.list method
-captions_list_response = youtube.captions().list(
-    part="snippet",
-    videoId=VIDEO_ID,
-).execute()
-
-# Get the transcript for the first caption track
-print(captions_list_response)
-print("-----------------------------------------")
-transcript = captions_list_response["items"][0]["snippet"]["text"]
-
-# Print the transcript
-print(transcript)
+try:
+    responses = YouTubeTranscriptApi.get_transcript(video_id, languages=['es'])
+    print('\n'+"Video: "+"https://www.youtube.com/watch?v="+str(video_id)+'\n'+'\n'+"Captions:")
+    for response in responses:
+        text = response['text']
+        print(text)
+except Exception as e:
+    print(e)
