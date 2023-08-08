@@ -21,7 +21,7 @@ def ratelimit_error(e):
 
 # Ruta protegida con registro de auditoría
 @app.route('/api/resource', methods=['GET'])
-@api_key_limiter.request_filter
+@api_key_limiter.limit("5 per minute")
 def protected_resource():
     api_key = request.headers.get('X-API-Key')
     logger = logging.getLogger('app')  # Crear un nuevo logger aquí
