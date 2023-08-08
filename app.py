@@ -14,6 +14,20 @@ app = Flask(__name__)
 def ratelimit_error(e):
     return jsonify(error='Rate limit exceeded', message=str(e.description)), 429
 
+# Configura Flask-Limiter
+limiter = Limiter(
+    app,
+    key_func=lambda: request.headers.get('X-API-Key'),
+    default_limits=["100 per day", "10 per hour"]
+)
+
+# Filtro de solicitud para autenticación
+@limiter.request_filter
+def is_not_authenticated():
+    api_key = request.headers.get('X-API-Key')
+    return api_key is None
+
+
 # Ruta protegida con registro de auditoría
 @app.route('/api/resource', methods=['GET'])
 def protected_resource():
@@ -21,24 +35,12 @@ def protected_resource():
     logger = logging.getLogger('app')  # Crear un nuevo logger aquí
     logger.info(f"Solicitud recibida para la ruta /api/resource con clave API: {api_key}")
 
-    # Configura Flask-Limiter con la función de clave
-    limiter = Limiter(
-        app,
-        key_func=lambda: api_key,  # Usar la clave API obtenida de la solicitud
-        default_limits=["100 per day", "10 per hour"]
-    )
-
     if api_key == 'tu_clave_secreta':
         return jsonify(message='Acceso concedido a la API protegida')
     else:
         return jsonify(error='Acceso no autorizado'), 401
 
 
-# Filtro de solicitud para autenticación
-@limiter.request_filter
-def is_not_authenticated():
-    api_key = request.headers.get('X-API-Key')
-    return api_key is None
 
 if __name__ == '__main__':
     app.run()
