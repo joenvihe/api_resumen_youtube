@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 # Configura Flask-Limiter 
 get_api_key = lambda : request.headers.get('X-API-Key')
-api_key_limiter = Limiter(get_api_key,app,
+api_key_limiter = Limiter(get_api_key,app=app,
                   default_limits=["100 per day", "10 per hour"])
 
 @app.errorhandler(429)
