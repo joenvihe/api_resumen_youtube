@@ -2,8 +2,6 @@ from flask import Flask, request, jsonify
 from flask_limiter import Limiter
 import logging
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger('app')
 logging.basicConfig(
     filename='app.log',  # Nombre del archivo de registro
     level=logging.INFO,
@@ -12,6 +10,7 @@ logging.basicConfig(
 
 app = Flask(__name__)
 
+# Configura Flask-Limiter con la función de clave
 limiter = Limiter(
     app,
     key_func=lambda: request.headers.get('X-API-Key'),
@@ -22,24 +21,23 @@ limiter = Limiter(
 def ratelimit_error(e):
     return jsonify(error='Rate limit exceeded', message=str(e.description)), 429
 
+# Filtro de solicitud para autenticación
 @limiter.request_filter
 def is_not_authenticated():
     api_key = request.headers.get('X-API-Key')
     return api_key is None
 
-
+# Ruta protegida con registro de auditoría
 @app.route('/api/resource', methods=['GET'])
 def protected_resource():
     api_key = request.headers.get('X-API-Key')
+    logger = logging.getLogger('app')  # Crear un nuevo logger aquí
     logger.info(f"Solicitud recibida para la ruta /api/resource con clave API: {api_key}")
 
     if api_key == 'tu_clave_secreta':
         return jsonify(message='Acceso concedido a la API protegida')
     else:
         return jsonify(error='Acceso no autorizado'), 401
-
-if __name__ == '__main__':
-    app.run()
 
 """
 from apiclient.discovery import build
