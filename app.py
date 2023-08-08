@@ -50,7 +50,7 @@ def youtube_transcript():
     if api_key == SECRET_KEY_API:
         VIDEO_ID = request.args.get('video_id')
         try:
-            responses = YouTubeTranscriptApi.get_transcript(VIDEO_ID, languages=['es'])
+            responses = YouTubeTranscriptApi.get_transcript(VIDEO_ID, languages=['es','en'])
             logger.info('\n'+"Video: "+"https://www.youtube.com/watch?v="+str(VIDEO_ID)+'\n'+'\n'+"Captions:")
             text = ""
             for response in responses:
