@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import logging
 
 logging.basicConfig(
@@ -10,19 +11,20 @@ logging.basicConfig(
 
 app = Flask(__name__)
 
+# Configura Flask-Limiter 
+limiter = Limiter(app, 
+                  key_func=get_remote_address,
+                  default_limits=["100 per day", "10 per hour"])
+get_api_key = lambda : request.headers.get('apikey')
+api_key_limiter = Limiter(app, key_func=get_api_key,
+                  default_limits=["100 per day", "10 per hour"])
+
 @app.errorhandler(429)
 def ratelimit_error(e):
     return jsonify(error='Rate limit exceeded', message=str(e.description)), 429
 
-# Configura Flask-Limiter
-limiter = Limiter(
-    app,
-    key_func=lambda: request.headers.get('X-API-Key'),
-    default_limits=["100 per day", "10 per hour"]
-)
-
 # Filtro de solicitud para autenticación
-@limiter.request_filter
+@api_key_limiter.request_filter
 def is_not_authenticated():
     api_key = request.headers.get('X-API-Key')
     return api_key is None
