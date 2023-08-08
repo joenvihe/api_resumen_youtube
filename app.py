@@ -20,15 +20,9 @@ api_key_limiter = Limiter(app, key_func=get_api_key,
 def ratelimit_error(e):
     return jsonify(error='Rate limit exceeded', message=str(e.description)), 429
 
-# Filtro de solicitud para autenticación
-@api_key_limiter.request_filter
-def is_not_authenticated():
-    api_key = request.headers.get('X-API-Key')
-    return api_key is None
-
-
 # Ruta protegida con registro de auditoría
 @app.route('/api/resource', methods=['GET'])
+@api_key_limiter.request_filter
 def protected_resource():
     api_key = request.headers.get('X-API-Key')
     logger = logging.getLogger('app')  # Crear un nuevo logger aquí
