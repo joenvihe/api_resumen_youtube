@@ -29,7 +29,11 @@ def protected_resource():
     logger.info(f"Solicitud recibida para la ruta /api/resource con clave API: {api_key}")
 
     # Configura Flask-Limiter con la función de clave
-    limiter = Limiter(api_key, app=app, default_limits=["200 per day", "50 per hour"])
+    limiter = Limiter(
+        app,
+        key_func=lambda: api_key,  # Usar la clave API obtenida de la solicitud
+        default_limits=["100 per day", "10 per hour"]
+    )
 
     if api_key == 'tu_clave_secreta':
         return jsonify(message='Acceso concedido a la API protegida')
