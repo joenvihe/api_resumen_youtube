@@ -36,7 +36,7 @@ def protected_resource():
         return jsonify(error='Acceso no autorizado'), 401
 
 
-@app.route('/yutube_transcript', methods=['GET'])
+@app.route('/youtube_transcript', methods=['GET'])
 @api_key_limiter.limit("5 per minute")
 def youtube_transcript():
     API_KEY = os.environ["API_KEY_YOUTUBE_DATA"]
@@ -45,9 +45,9 @@ def youtube_transcript():
     youtube = build('youtube', 'v3', developerKey=API_KEY)
     api_key = request.headers.get('X-API-Key')
     logger = logging.getLogger('app')  # Crear un nuevo logger aquí
-    logger.info(f"Solicitud recibida para la ruta /api/resource con clave API: {api_key}")
-
-    if api_key == 'SECRET_KEY_API':
+    logger.info(f"Solicitud recibida para la ruta /apis/youtube_transcript con clave API_KEY: {api_key}")
+    
+    if api_key == SECRET_KEY_API:
         VIDEO_ID = request.args.get('video_id')
         try:
             responses = YouTubeTranscriptApi.get_transcript(VIDEO_ID, languages=['es'])
