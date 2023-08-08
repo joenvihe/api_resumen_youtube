@@ -20,7 +20,7 @@ def ratelimit_error(e):
     return jsonify(error='Rate limit exceeded', message=str(e.description)), 429
 
 # Ruta protegida con registro de auditoría
-@app.route('/api/resource', methods=['GET'])
+@app.route('/resource', methods=['GET'])
 @api_key_limiter.limit("5 per minute")
 def protected_resource():
     api_key = request.headers.get('X-API-Key')
