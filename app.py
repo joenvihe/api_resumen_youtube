@@ -12,9 +12,6 @@ logging.basicConfig(
 app = Flask(__name__)
 
 # Configura Flask-Limiter 
-limiter = Limiter(app, 
-                  key_func=get_remote_address,
-                  default_limits=["100 per day", "10 per hour"])
 get_api_key = lambda : request.headers.get('apikey')
 api_key_limiter = Limiter(app, key_func=get_api_key,
                   default_limits=["100 per day", "10 per hour"])
