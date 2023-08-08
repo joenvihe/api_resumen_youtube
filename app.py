@@ -37,7 +37,7 @@ def protected_resource():
         return jsonify(error='Acceso no autorizado'), 401
 
 
-def get_completion(prompt, model="gpt-3.5-turbo"):
+def get_completion(prompt, model="gpt-3.5-turbo-16k"):
   messages = [{"role": "user", "content": prompt}]
   response = openai.ChatCompletion.create(
      model=model,
