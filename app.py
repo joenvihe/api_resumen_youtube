@@ -11,11 +11,7 @@ logging.basicConfig(
 app = Flask(__name__)
 
 # Configura Flask-Limiter con la función de clave
-limiter = Limiter(
-    app,
-    key_func=lambda: request.headers.get('X-API-Key'),
-    default_limits=["100 per day", "10 per hour"]
-)
+limiter = Limiter(request.headers.get('X-API-Key'), app=app, default_limits=["200 per day", "50 per hour"])
 
 @app.errorhandler(429)
 def ratelimit_error(e):
